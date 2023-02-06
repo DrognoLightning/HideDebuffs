@@ -1,7 +1,7 @@
 ## Interface: 100005
 ## Version: 1.0.0
 ## Title: HideDebuffs
-## SavedVariables: SavedZero
+## SavedVariables: DebuffValue
 ## Notes: Hide target and focus debuffs
 ## Author: DrongoLightning
 

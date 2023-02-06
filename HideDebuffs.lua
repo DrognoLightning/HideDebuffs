@@ -1,3 +1,8 @@
+--[[
+	https://wowpedia.fandom.com/wiki/Widget_script_handlers#Slider -- Slider events
+	https://wowpedia.fandom.com/wiki/UIOBJECT_Slider?so=search -- slider api
+]]
+
 local f = CreateFrame("Frame");
 
 function f:OnEvent(event, addOnName)
@@ -5,12 +10,10 @@ function f:OnEvent(event, addOnName)
         HideDebuffsDB = HideDebuffsDB
 		self.db = HideDebuffsDB
 		self:InitializeOptions()
-        if SavedZero == true then
-            MAX_TARGET_DEBUFFS = 0;
-            MAX_TARGET_BUFFS = 0;
-            ChatFrame1:AddMessage("Zero debuffs shown");
-        else
-            ChatFrame1:AddMessage("Default debuffs shown");
+        if DebuffValue then
+            MAX_TARGET_DEBUFFS = DebuffValue;
+            MAX_TARGET_BUFFS = DebuffValue;
+            ChatFrame1:AddMessage("debuffs set to " .. DebuffValue);
         end
 	end
 end
@@ -24,26 +27,26 @@ function f:InitializeOptions()
 	self.panel = CreateFrame("Frame")
 	self.panel.name = "HideDebuffs"
 
-	local btn = CreateFrame("Button", nil, self.panel, "UIPanelButtonTemplate")
-	btn:SetPoint("TOPLEFT", 20, -20)
-	btn:SetText("Max debuffs 0")
-	btn:SetWidth(100)
-	btn:SetScript("OnClick", function()
-        MAX_TARGET_DEBUFFS = 0;
-        MAX_TARGET_BUFFS = 0;
-        SavedZero = true;
+	local DebuffSlider = CreateFrame("Slider", "DebuffAndBuffLimit", self.panel, "OptionsSliderTemplate")
+	DebuffSlider:SetPoint("CENTER",0,0)
+	DebuffSlider:SetWidth(400)
+	DebuffSlider:SetHeight(20)
+	DebuffSlider:SetOrientation('HORIZONTAL')
+	_G[DebuffSlider:GetName() .. 'Low']:SetText("0")
+	_G[DebuffSlider:GetName() .. 'High']:SetText("16")
+	_G[DebuffSlider:GetName() .. 'Text']:SetText("8")
+	DebuffSlider:SetMinMaxValues(0, 16)
+	if DebuffValue then
+		DebuffSlider:SetValue(DebuffValue);
+	else
+		DebuffSlider:SetValue(16)
+	end
+    DebuffSlider:SetValueStep(1)
+	DebuffSlider:SetScript("OnValueChanged", function(self)
+		DebuffValue = self:GetValue()
+		MAX_TARGET_DEBUFFS = DebuffValue;
+		MAX_TARGET_BUFFS = DebuffValue;
 	end)
-
-    local btn = CreateFrame("Button", nil, self.panel, "UIPanelButtonTemplate")
-	btn:SetPoint("TOPLEFT", 20, -60)
-	btn:SetText("Max debuffs 16")
-	btn:SetWidth(100)
-	btn:SetScript("OnClick", function()
-        MAX_TARGET_DEBUFFS = 16;
-        MAX_TARGET_BUFFS = 16;
-        SavedZero = false;
-	end)
-
 	InterfaceOptions_AddCategory(self.panel)
 end
 
